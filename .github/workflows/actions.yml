@@ -1,0 +1,61 @@
+name: CI/CD Test
+
+
+on:
+
+  push:
+
+    branches: ["main"]
+
+
+
+jobs:
+
+  # Name of the job/test
+
+  api_tests:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+
+        uses: actions/setup-node@v4
+
+        with:
+
+          node-version: '22'
+
+      - name: Setup dotnet
+
+        uses: actions/setup-dotnet@v4
+
+        with:
+
+          dotnet-version: 9.0.x
+
+      - name: Install Newman
+
+        run: npm install -g newman
+
+      - name: Install dotnet project dependencies
+
+        run: dotnet restore
+
+      - name: Build
+
+        run: dotnet build
+
+      - name: Start Server
+
+        run: nohup dotnet run --project server/ &
+
+      - name: Run API-Tests
+
+        run: newman run ./server/api_tests/SwineSync.postman_collection.json 
+
+
+ 
