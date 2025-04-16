@@ -45,10 +45,6 @@ jobs:
 
         run: dotnet restore
 
-      - name: Build
-
-        run: dotnet build
-
       - name: Start Server
 
         run: nohup dotnet run --project server/ &
