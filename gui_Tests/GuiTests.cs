@@ -31,9 +31,9 @@ public class DemoTest : PageTest
 
         {
 
-            Headless = false,
+            Headless = true,
 
-            SlowMo = 1000 // Lägger in en fördröjning så vi kan se vad som händer
+            SlowMo = 100 // Lägger in en fördröjning så vi kan se vad som händer
 
         });
 
@@ -59,17 +59,12 @@ public class DemoTest : PageTest
     }
 
 
+
     [TestMethod]
     public async Task SuperAdminBlockUnblockCompanyTest()
 
     {
-        await _page.GotoAsync("http://localhost:5000/");
-        await _page.GetByRole(AriaRole.Textbox, new(){Name="Email.."}).FillAsync("super_gris@mail.com"); 
-        await _page.GetByRole(AriaRole.Textbox, new(){Name="Password.."}).FillAsync("kung"); 
-        await _page.GetByRole(AriaRole.Button, new(){Name="login!"}).ClickAsync();
-
-       
-        await _page.GetByRole(AriaRole.Button, new(){Name="Companies"}).ClickAsync();
+        await WhenImAt("super_gris@mail.com","kung","Companies" );
 
          await _page.GetByRole(AriaRole.Listitem).Filter(new(){ Has= _page.GetByText("Global Ventures")} ).GetByRole(AriaRole.Button, new() {Name="block"}).ClickAsync();
         
@@ -83,7 +78,6 @@ public class DemoTest : PageTest
         await inactiveCompany.ClickAsync();
 
         await _page.GetByRole(AriaRole.Button, new() {Name="Sign Out"}).ClickAsync();
-        // Kontrollera att knappen "Electronics" finns på sidan
 
     }
 
@@ -91,12 +85,7 @@ public class DemoTest : PageTest
     public async Task SuperAdminCreateDeleteCompanyTest()
 
     {
-        await _page.GotoAsync("http://localhost:5000/");
-        await _page.GetByRole(AriaRole.Textbox, new(){Name="Email.."}).FillAsync("super_gris@mail.com"); 
-        await _page.GetByRole(AriaRole.Textbox, new(){Name="Password.."}).FillAsync("kung"); 
-        await _page.GetByRole(AriaRole.Button, new(){Name="login!"}).ClickAsync();
-        await _page.GetByRole(AriaRole.Button, new(){Name="Companies"}).ClickAsync();
-
+         await WhenImAt("super_gris@mail.com","kung","Companies" );
         
         await _page.GetByRole(AriaRole.Button, new(){Name="Add Company"}).ClickAsync();
         
@@ -112,7 +101,7 @@ public class DemoTest : PageTest
         await Expect(createdCompany).ToBeVisibleAsync();
         await createdCompany.ClickAsync();
         await _page.GetByRole(AriaRole.Button, new() {Name="Sign Out"}).ClickAsync();
-        // Kontrollera att knappen "Electronics" finns på sidan
+
 
     }
 
@@ -120,14 +109,9 @@ public class DemoTest : PageTest
  public async Task SuperAdminEditCompanyTest()
 
     {
-        await _page.GotoAsync("http://localhost:5000/");
-        await _page.GetByRole(AriaRole.Textbox, new(){Name="Email.."}).FillAsync("super_gris@mail.com"); 
-        await _page.GetByRole(AriaRole.Textbox, new(){Name="Password.."}).FillAsync("kung"); 
-        await _page.GetByRole(AriaRole.Button, new(){Name="login!"}).ClickAsync();
-        await _page.GetByRole(AriaRole.Button, new(){Name="Companies"}).ClickAsync();
+          await WhenImAt("super_gris@mail.com","kung","Companies" );
 
-        
-        await _page.GetByRole(AriaRole.Listitem).Filter(new(){ Has= _page.GetByText("Tech Solutions")} ).GetByRole(AriaRole.Button, new() {Name="Edit"}).ClickAsync();
+           await GoToEdit("Tech Solutions");
         await _page.GetByLabel("Domain").FillAsync("http://contact@techsolutions_test.com");
         await _page.GetByRole(AriaRole.Button, new() {Name="Save"}).ClickAsync();
         await _page.GetByRole(AriaRole.Button, new() {Name="⬅️ Back"}).ClickAsync();
@@ -138,14 +122,14 @@ public class DemoTest : PageTest
         await _page.GetByLabel("Domain").FillAsync("http://contact@techsolutions.com");
         await _page.GetByRole(AriaRole.Button, new() {Name="Save"}).ClickAsync();
         await _page.GetByRole(AriaRole.Button, new() {Name="Sign Out"}).ClickAsync();
-        // Kontrollera att knappen "Electronics" finns på sidan
+
 
     }
 
 
 [TestMethod]
 
- public async Task SuperAdminEditCompanyTest()
+ public async Task ChatTest()
 
     {
         await _page.GotoAsync("http://localhost:5000/customer/low-pressure-shower-048/chat");
@@ -172,6 +156,233 @@ public class DemoTest : PageTest
 
     }
 
+
+[TestMethod]
+
+ public async Task SuperAdminEditAdminTest(){
+   await WhenImAt("super_gris@mail.com","kung","Admins" );
+    await GoToEdit("Boss Hog");
+    await _page.GetByLabel("Email").FillAsync("boss-hog@company.com");
+        await _page.GetByRole(AriaRole.Button, new() {Name="Save"}).ClickAsync();
+        await _page.GetByRole(AriaRole.Button, new() {Name="⬅️ Back"}).ClickAsync();
+        
+        var changedAdmin=_page.GetByRole(AriaRole.Listitem).Filter(new(){ Has= _page.GetByText("boss-hog@company.com")} ).GetByRole(AriaRole.Button, new() {Name="Edit"});
+        await Expect(changedAdmin).ToBeVisibleAsync();
+        await changedAdmin.ClickAsync(); 
+        await _page.GetByLabel("Email").FillAsync("boss-hog@company2.com");
+        await _page.GetByRole(AriaRole.Button, new() {Name="Save"}).ClickAsync();
+        await _page.GetByRole(AriaRole.Button, new() {Name="Sign Out"}).ClickAsync();
+
+
+    }
+
+ 
+    [TestMethod]
+    public async Task SuperAdminBlockUnblockAdminTest()
+
+    {
+        await WhenImAt("super_gris@mail.com","kung","Admins" );
+
+         await _page.GetByRole(AriaRole.Listitem).Filter(new(){ Has= _page.GetByText("Pelle Svinsson")} ).GetByRole(AriaRole.Button, new() {Name="block"}).ClickAsync();
+        
+        await _page.GetByRole(AriaRole.Button, new(){Name="Show Inactive Admins"}).ClickAsync();
+
+        
+        var inactiveCompany=_page.GetByRole(AriaRole.Listitem).Filter(new(){ Has= _page.GetByText("pelle.svinsson@fakemail.com")} ).GetByRole(AriaRole.Button, new() {Name="Activate"}); 
+        
+        await Expect(inactiveCompany).ToBeVisibleAsync();
+        
+        await inactiveCompany.ClickAsync();
+
+        await _page.GetByRole(AriaRole.Button, new() {Name="Sign Out"}).ClickAsync();
+   
+
+    }
+
+
+
+    //    [TestMethod]
+    // public async Task SuperAdminCreateDeleteAdminTest()
+
+    // {
+    //      await WhenImAt("super_gris@mail.com","kung","Admins" );
+        
+    //     await _page.GetByRole(AriaRole.Button, new(){Name="Add Admin"}).ClickAsync();
+        
+    //      await _page.GetByLabel("Name").FillAsync("Test Admin");
+    //      await _page.GetByLabel("Email").FillAsync("test.admin@swinesync.com");
+    //     await _page.GetByLabel("Company").SelectOptionAsync("Global Ventures");
+
+    //      await _page.GetByRole(AriaRole.Button, new() {Name="Save"}).ClickAsync();
+    //      await _page.GetByRole(AriaRole.Button, new() {Name="⬅️ Back"}).ClickAsync();
+
+    //     await _page.GotoAsync("http://localhost:5000/admins");
+    //     var createdItem= _page.GetByRole(AriaRole.Listitem).Filter(new(){ Has= _page.GetByText("Test Admin")} ).GetByRole(AriaRole.Button, new() {Name="delete"});
+    //     await Expect(createdItem).ToBeVisibleAsync();
+    //     await createdItem.ClickAsync();
+    //     await _page.GetByRole(AriaRole.Button, new() {Name="Sign Out"}).ClickAsync();
+   
+    // }
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+// /  admin tests
+// / 
+
+//////////// Products
+
+
+       [TestMethod]
+    public async Task AdminCreateDeleteProductTest()
+
+    {
+         await WhenImAt("grune@grymt.se","hejhej","Products" );
+        
+        await _page.GetByRole(AriaRole.Button, new(){Name="Add product"}).ClickAsync();
+        
+         await _page.GetByLabel("Name").FillAsync("Test Product");
+         await _page.GetByLabel("Description").FillAsync("a test product");
+         await _page.GetByLabel("Price").FillAsync("100");
+         await _page.GetByLabel("Category").FillAsync(" test category");
+ 
+
+         await _page.GetByRole(AriaRole.Button, new() {Name="Save"}).ClickAsync();
+         await _page.GetByRole(AriaRole.Button, new() {Name="⬅️ Back"}).ClickAsync();
+
+        var createdItem= _page.GetByRole(AriaRole.Listitem).Filter(new(){ Has= _page.GetByText("Test Product")} ).GetByRole(AriaRole.Button, new() {Name="delete"});
+        await Expect(createdItem).ToBeVisibleAsync();
+        await createdItem.ClickAsync();
+        await _page.GetByRole(AriaRole.Button, new() {Name="Sign Out"}).ClickAsync();
+   
+    }
+
+
+ [TestMethod]
+    public async Task AdminBlockUnblockProductTest()
+    {    
+        await WhenImAt("grune@grymt.se","hejhej","Products" );
+
+         await _page.GetByRole(AriaRole.Listitem).Filter(new(){ Has= _page.GetByText("Mud Bath")} ).GetByRole(AriaRole.Button, new() {Name="block"}).ClickAsync();
+        
+        await _page.GetByRole(AriaRole.Button, new(){Name="Show Inactive Products"}).ClickAsync();
+
+        
+        var inactiveCompany=_page.GetByRole(AriaRole.Listitem).Filter(new(){ Has= _page.GetByText("Mud Bath")} ).GetByRole(AriaRole.Button, new() {Name="Activate"}); 
+        
+        await Expect(inactiveCompany).ToBeVisibleAsync();
+        
+        await inactiveCompany.ClickAsync();
+
+        await _page.GetByRole(AriaRole.Button, new() {Name="Sign Out"}).ClickAsync();
+   
+
+    }
+
+
+[TestMethod]
+
+ public async Task AdminEditProductTest(){
+  await WhenImAt("grune@grymt.se","hejhej","Products" );
+    await GoToEdit("Organic Swine Feed");
+    await _page.GetByLabel("Category").FillAsync("Test Category");
+        await _page.GetByRole(AriaRole.Button, new() {Name="Save"}).ClickAsync();
+        await _page.GetByRole(AriaRole.Button, new() {Name="⬅️ Back"}).ClickAsync();
+        
+        var changedItem=_page.GetByRole(AriaRole.Listitem).Filter(new(){ Has= _page.GetByText("Test Category")} ).GetByRole(AriaRole.Button, new() {Name="Edit"});
+        await Expect(changedItem).ToBeVisibleAsync();
+        await changedItem.ClickAsync(); 
+        await _page.GetByLabel("Category").FillAsync("Feed");
+        await _page.GetByRole(AriaRole.Button, new() {Name="Save"}).ClickAsync();
+        await _page.GetByRole(AriaRole.Button, new() {Name="Sign Out"}).ClickAsync();
+
+
+    }
+
+
+//////////////////// Support Agents 
+// / 
+// / 
+// / 
+
+    //    [TestMethod]
+    // public async Task AdminCreateDeleteSupportAgent()
+
+    // {
+    //      await WhenImAt("grune@grymt.se","hejhej","Support Agents" );
+        
+    //     await _page.GetByRole(AriaRole.Button, new(){Name="Add Support Agent"}).ClickAsync();
+        
+    //      await _page.GetByLabel("Name").FillAsync("Test Agent");
+    //      await _page.GetByLabel("Email").FillAsync("test.agent@swinesync.com");
+    //      await _page.GetByRole(AriaRole.Listitem).Filter(new(){Has=_page.GetByText("Account Management")}).ClickAsync();
+        
+
+    //      await _page.GetByRole(AriaRole.Button, new() {Name="Save"}).ClickAsync();
+    //      await _page.GetByRole(AriaRole.Button, new() {Name="⬅️ Back"}).ClickAsync();
+    //     await _page.GotoAsync("http://localhost:5000/agents");
+    //     var createdItem= _page.GetByRole(AriaRole.Listitem).Filter(new(){ Has= _page.GetByText("Test Agent")} ).GetByRole(AriaRole.Button, new() {Name="delete"});
+    //     await Expect(createdItem).ToBeVisibleAsync();
+    //     await createdItem.ClickAsync();
+    //     await _page.GetByRole(AriaRole.Button, new() {Name="Sign Out"}).ClickAsync();
+   
+    // }
+
+
+ [TestMethod]
+    public async Task AdminBlockUnblockAgentTest()
+    {    
+        await WhenImAt("grune@grymt.se","hejhej","Support Agents" );
+
+         await _page.GetByRole(AriaRole.Listitem).Filter(new(){ Has= _page.GetByText("Pig Pal")} ).GetByRole(AriaRole.Button, new() {Name="block"}).ClickAsync();
+        
+        await _page.GetByRole(AriaRole.Button, new(){Name="Show Inactive Agents"}).ClickAsync();
+
+        
+        var inactiveCompany=_page.GetByRole(AriaRole.Listitem).Filter(new(){ Has= _page.GetByText("Pig Pal")} ).GetByRole(AriaRole.Button, new() {Name="Activate"}); 
+        
+        await Expect(inactiveCompany).ToBeVisibleAsync();
+        
+        await inactiveCompany.ClickAsync();
+
+        await _page.GetByRole(AriaRole.Button, new() {Name="Sign Out"}).ClickAsync();
+   
+
+    }
+
+
+[TestMethod]
+
+ public async Task AdminEditAgentTest(){
+  await WhenImAt("grune@grymt.se","hejhej","Support Agents" );
+    await GoToEdit("Nasse Puh");
+    await _page.GetByLabel("Name").FillAsync("Nalle Puh");
+        await _page.GetByRole(AriaRole.Button, new() {Name="Save"}).ClickAsync();
+        await _page.GetByRole(AriaRole.Button, new() {Name="⬅️ Back"}).ClickAsync();
+        
+        var changedItem=_page.GetByRole(AriaRole.Listitem).Filter(new(){ Has= _page.GetByText("Nalle Puh")} ).GetByRole(AriaRole.Button, new() {Name="Edit"});
+        await Expect(changedItem).ToBeVisibleAsync();
+        await changedItem.ClickAsync(); 
+        await _page.GetByLabel("Name").FillAsync("Nasse Puh");
+        await _page.GetByRole(AriaRole.Button, new() {Name="Save"}).ClickAsync();
+        await _page.GetByRole(AriaRole.Button, new() {Name="Sign Out"}).ClickAsync();
+
+
+    }
+
+
+
+
+public async Task WhenImAt(string email,string password , string buttonName){
+            await _page.GotoAsync("http://localhost:5000/");
+        await _page.GetByRole(AriaRole.Textbox, new(){Name="Email.."}).FillAsync(email); 
+        await _page.GetByRole(AriaRole.Textbox, new(){Name="Password.."}).FillAsync(password); 
+        await _page.GetByRole(AriaRole.Button, new(){Name="login!"}).ClickAsync();
+        await _page.GetByRole(AriaRole.Button, new(){Name=buttonName}).ClickAsync();
+}
+
+public async Task GoToEdit(string itemName){
+    await _page.GetByRole(AriaRole.Listitem).Filter(new(){ Has= _page.GetByText(itemName)} ).GetByRole(AriaRole.Button, new() {Name="Edit"}).ClickAsync();
+}
 
 
 }
