@@ -58,17 +58,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-
-       
       - uses: actions/checkout@v4
-
-      - name: Set up Node.js
-
-        uses: actions/setup-node@v4
-
-        with:
-
-          node-version: '22'
 
       - name: Setup dotnet
 
@@ -93,6 +83,9 @@ jobs:
       - name: build project
         
         run: cd  gui_Tests/ && dotnet build
+
+      - name: Ensure Playwright browsers are installed
+        run: cd gui_Tests/ && pwsh bin/Debug/net8.0/playwright.ps1 install --with-deps
 
       - name: run tests
 

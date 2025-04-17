@@ -128,11 +128,10 @@ public class DemoTest : PageTest
 
 
 [TestMethod]
-
  public async Task ChatTest()
 
     {
-        await _page.GotoAsync("http://localhost:5000/customer/leak-dispenser-002/chat");
+        await _page.GotoAsync("http://localhost:5000/customer/sprinkler-coverage-019/chat");
         await _page.GetByRole(AriaRole.Textbox).FillAsync("customer test");
         await _page.GetByRole(AriaRole.Button, new() {Name="Send"}).ClickAsync(); 
 
@@ -141,13 +140,13 @@ public class DemoTest : PageTest
         await _page.GetByRole(AriaRole.Textbox, new(){Name="Password.."}).FillAsync("asd123"); 
         await _page.GetByRole(AriaRole.Button, new(){Name="login!"}).ClickAsync();
 
-        await _page.GetByRole(AriaRole.Listitem).Filter(new(){ Has= _page.GetByText("Water dispenser is leaking")}).GetByRole(AriaRole.Link).ClickAsync(); 
+        await _page.GetByRole(AriaRole.Listitem).Filter(new(){ Has= _page.GetByText("Cooling sprinkler not covering full area")}).GetByRole(AriaRole.Link).ClickAsync(); 
         await Expect( _page.Locator("css=.chat-left-message").Nth(-1).GetByText("customer test")).ToHaveTextAsync("customer test");
         await _page.GetByRole(AriaRole.Textbox).FillAsync("agent test");
         await _page.GetByRole(AriaRole.Button, new() {Name="Send"}).ClickAsync();
         await _page.GetByRole(AriaRole.Button, new() {Name="Sign Out"}).ClickAsync(); 
 
-         await _page.GotoAsync("http://localhost:5000/customer/leak-dispenser-002/chat");
+         await _page.GotoAsync("http://localhost:5000/customer/sprinkler-coverage-019/chat");
          await Expect( _page.Locator("css=.chat-left-message").Nth(-1).GetByText("agent test")).ToHaveTextAsync("agent test");
 
       
