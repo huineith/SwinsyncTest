@@ -86,21 +86,17 @@ jobs:
 
         run: nohup dotnet run --project server/ &
 
-      - name: go into gui_Tests/
+      - name: dotnet restore
 
-        run: cd  gui_Tests
-      
-      - name: dotnet restor
-
-        run: dotnet restore 
+        run: cd  gui_Tests && gui_test && dotnet restore 
       
       - name: build project
         
-        run: dotnet build
+        run: cd  gui_Tests && dotnet build
 
       - name: run tests
 
-        run: dotnet test 
+        run: cd  gui_Tests &&  dotnet test 
 
 
  
