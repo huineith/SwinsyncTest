@@ -78,7 +78,7 @@ jobs:
 
       - name: dotnet restore
 
-        run: cd  gui_Tests/ && gui_test && dotnet restore 
+        run: cd  gui_Tests/ && dotnet restore 
       
       - name: build project
         
