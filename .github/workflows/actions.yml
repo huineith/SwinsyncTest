@@ -54,7 +54,7 @@ jobs:
         run: newman run ./server/api_tests/SwineSync.postman_collection.json 
 
 
-    gui_test:
+  gui_test:
        
       - uses: actions/checkout@v4
 
