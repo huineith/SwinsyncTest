@@ -54,4 +54,49 @@ jobs:
         run: newman run ./server/api_tests/SwineSync.postman_collection.json 
 
 
+    gui_test:
+       
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+
+        uses: actions/setup-node@v4
+
+        with:
+
+          node-version: '22'
+
+      - name: Setup dotnet
+
+        uses: actions/setup-dotnet@v4
+
+        with:
+
+          dotnet-version: 8.0.x
+
+      - name: Install dotnet project dependencies
+
+        run: dotnet restore
+
+      - name: Start Server
+
+        run: nohup dotnet run --project server/ &
+
+      - name: go into gui_Tests/
+
+        run: cd  gui_Tests
+      
+      - name: dotnet restor
+
+        run: dotnet restore 
+      
+      - name: build project
+        
+        run: dotnet build
+
+      - name: run tests
+
+        run: dotnet test 
+
+
  
