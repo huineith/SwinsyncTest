@@ -88,15 +88,15 @@ jobs:
 
       - name: dotnet restore
 
-        run: cd  gui_Tests && gui_test && dotnet restore 
+        run: cd  gui_Tests/ && gui_test && dotnet restore 
       
       - name: build project
         
-        run: cd  gui_Tests && dotnet build
+        run: cd  gui_Tests/ && dotnet build
 
       - name: run tests
 
-        run: cd  gui_Tests &&  dotnet test 
+        run: cd  gui_Tests/ &&  dotnet test 
 
 
  
